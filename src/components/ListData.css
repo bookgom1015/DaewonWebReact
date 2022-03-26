@@ -1,0 +1,37 @@
+table[id='edit-data-table'] {
+    width: 100%;
+}
+
+table[id='edit-data-table'] thead tr {
+    height: 50px;
+    background-color: #aebfdb;
+    border-left: 3px solid #2163cf;
+}
+
+table[id='edit-data-table'] thead tr th {
+    padding-left: 10px;
+}
+
+table[id='edit-data-table'] tbody tr {
+    border-left: 3px solid #2163cf;
+}
+
+table[id='edit-data-table'] .even {
+    background-color: #dfeafc;
+}
+
+table[id='edit-data-table'] tbody tr td {
+    padding-left: 10px;
+}
+
+table[id='edit-data-table'] tbody tr td:nth-child(4) {
+    padding-left: 10px;
+    width: 140px;
+}
+
+@media screen and (max-width: 767px) {
+    table[id='edit-data-table'] tbody tr td:nth-child(4) {
+        padding-left: 15px;
+        width: 80px;
+    }    
+}

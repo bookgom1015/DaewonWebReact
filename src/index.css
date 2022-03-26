@@ -11,3 +11,25 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.validation-control {
+  background-color: #ffe9e9;
+  border-color: #ff4747;
+}
+
+.validation-message {
+  margin-left: 5px;
+  margin-top: 5px;
+  color: #fc5d5d;  
+}
+
+button:focus {
+  outline: 0;
+}
+
+input[type='submit'] {
+  float: right;
+  margin-left: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}

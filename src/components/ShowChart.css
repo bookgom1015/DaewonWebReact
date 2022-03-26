@@ -1,0 +1,19 @@
+div[id='chart-panel-wrapper'] {
+    width: calc(100% - 150px);
+    float: right;
+}
+
+div[id='date-nav-wrapper'] {
+    width: 150px;
+    float: left;
+}
+
+@media screen and (max-width: 767px) {
+    div[id='chart-panel-wrapper'] {
+        width: 100%;
+    }
+    
+    div[id='date-nav-wrapper'] {
+        width: 150px;
+    }
+}
