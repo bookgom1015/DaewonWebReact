@@ -146,24 +146,26 @@ export class EditData extends Component {
                         <input className={weightIsValid ? 'form-control' : 'form-control validation-control'} type='number' max='1.7976931348623157E+308' min='0' value={this.state.weight} onKeyDown={this.onWeightKeyDown} onChange={this.onWeightChanged} />
                         {!weightIsValid && <div className='validation-message'>중량을 입력해주십시오</div>}
                     </div>
-                    <input className='btn btn-primary' type='submit' value='수정하기' />
-                    <button className='btn btn-secondary back-btn' onClick={this.onBackBtnClicked}>돌아가기</button>
+                    <div className='form-submit'>
+                        <input className='btn btn-primary form-btn' type='submit' value='수정하기' />
+                        <button className='btn btn-secondary form-btn' onClick={this.onBackBtnClicked}>돌아가기</button>
+                    </div>
                 </form>
             </div>
         );
     }
 
     async populateWorkrooms() {
-        const token = localStorage.getItem('token');
-
         const response = await fetch('api/station', {
             method: 'GET',
             headers: {
-                'Authorization': token + ''
+                'Authorization': this.props.token + ''
             }
         });
         if (!response.ok) {
             console.log(response);
+            this.props.onStatusChanged(false, '데이터 불러오기 실패');
+            this.props.onSpecDataReseted();
             return;
         }
 
@@ -191,12 +193,12 @@ export class EditData extends Component {
             })
         });
         if (!response.ok) {
-            this.onStatusChanged(false, '전송 실패');
             console.log(response);
+            this.props.onStatusChanged(false, '수정 실패');
             return;
         }
 
-        this.props.onStatusChanged(true, '전송이 완료되었습니다');
+        this.props.onStatusChanged(true, '수정이 완료되었습니다');
         this.props.onSpecDataReseted();
     }
 }

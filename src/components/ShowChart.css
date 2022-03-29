@@ -17,3 +17,7 @@ div[id='date-nav-wrapper'] {
         width: 150px;
     }
 }
+
+.show-chart-wrapper {
+    margin-top: 20px;
+}

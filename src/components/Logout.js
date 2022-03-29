@@ -11,10 +11,8 @@ export class Logout extends Component {
     }
 
     componentDidMount() {
-        const token = localStorage.getItem('token');
-        if (token == null) return;
-
-        localStorage.removeItem('token');
+        if (this.props.token == null) return;
+        
         this.props.onTokenChanged(null);
         this.setState({
             loggedOut: true

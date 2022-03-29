@@ -27,9 +27,16 @@ button:focus {
   outline: 0;
 }
 
-input[type='submit'] {
+.form-submit {
   float: right;
+  margin-top: 20px;
+}
+
+.form-btn {
   margin-left: 5px;
-  margin-top: 5px;
-  margin-bottom: 5px;
+}
+
+.form-label {
+  margin-top: 20px;
+  margin-bottom: 40px;
 }

@@ -34,7 +34,7 @@ export class ChartPanel extends Component {
   }
 
   componentDidMount() {
-    this.fetchWorkrooms();
+    this.populateWorkrooms();
   }
 
   render() {
@@ -42,6 +42,7 @@ export class ChartPanel extends Component {
     if (workroomMap == null) return (<div>Now Loading...</div>);
 
     const labels = [...this.props.labels];
+    const suffixLabels = labels.map((date) => date + this.props.dateSuffix);
     const datasets = [...this.props.datasets].map(([workroom, dateMap], index) => (
       {
         label: workroom,
@@ -52,10 +53,14 @@ export class ChartPanel extends Component {
         maxBarThickness: 64
       }      
     ));
+
     const chartData = {
-      labels: labels,
+      labels: suffixLabels,
       datasets: datasets
     };
+
+    const dateSuffix = this.props.dateSuffix;
+    const dataSuffix = this.props.dataSuffix;
 
     return (
       <div>
@@ -74,8 +79,24 @@ export class ChartPanel extends Component {
                     font: {
                       size: 18
                     }
+                  },
+                  tooltip: {
+                    callbacks: {
+                      label: function(context) {
+                        return ' ' + context.dataset.data + ' 톤';
+                      }
+                    }
                   }
-                }
+                },
+                scales: {
+                  x: {
+                    ticks: {
+                      callback: function (value, index, ticks) {
+                        return value + ' ' + dataSuffix;
+                      }
+                    }
+                  }
+                }               
               }
             } 
           />
@@ -95,6 +116,22 @@ export class ChartPanel extends Component {
                     font: {
                       size: 18
                     } 
+                  },
+                  tooltip: {
+                    callbacks: {
+                      label: function(context) {
+                        return ' ' + context.dataset.data + ' 톤';
+                      }
+                    }
+                  }
+                },
+                scales: {
+                  y: {
+                    ticks: {
+                      callback: function (value, index, ticks) {
+                        return value + ' ' + dataSuffix;
+                      }
+                    }
                   }
                 }
               }
@@ -105,7 +142,7 @@ export class ChartPanel extends Component {
     );
   }
   
-  async fetchWorkrooms() {
+  async populateWorkrooms() {
     const response = await fetch('api/station', {
         method: 'GET',
         headers: {
@@ -114,6 +151,7 @@ export class ChartPanel extends Component {
     });
     if (!response.ok) {
         console.log(response);
+        this.props.onStatusChanged(false, '데이터 불러오기 실패');
         return;
     }
 

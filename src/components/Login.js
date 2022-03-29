@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Navigate } from 'react-router-dom';
 import './Login.css';
 
 export class Login extends Component {
@@ -62,7 +61,6 @@ export class Login extends Component {
     }
 
     succeededToLogin(token) {
-        window.localStorage.setItem('token', token); 
         this.props.onTokenChanged(token);
     }
 
@@ -72,7 +70,7 @@ export class Login extends Component {
 
         return (
             <div>
-                <h4>유저 로그인</h4>
+                <h4 className='form-label'>유저 로그인</h4>
                 <form onSubmit={this.submit}>
                     <div className='form-group'>
                         <label>아이디:</label>
@@ -84,7 +82,9 @@ export class Login extends Component {
                         <input className={pwdIsValid ? 'form-control' : 'form-control validation-control'} type='password' value={this.state.pwd} onChange={this.onPwdChanged} />
                         {!pwdIsValid && <div className='validation-message'>패스워드를 입력해주십시오</div>}
                     </div>
-                    <input className='btn btn-primary' type='submit' value='로그인' />
+                    <div className='form-submit'>
+                        <input className='btn btn-primary' type='submit' value='로그인' />
+                    </div>
                 </form>
             </div>
         );
@@ -102,7 +102,10 @@ export class Login extends Component {
             })
         });
         if (!response.ok) {
-            console.log(response);
+            this.props.onStatusChanged(false, '아이디 또는 비밀번호가 일치하지 않습니다');
+            this.setState({
+                pwd: ''
+            });
             return;
         }
 

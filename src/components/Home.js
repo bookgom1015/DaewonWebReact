@@ -9,8 +9,6 @@ export class Home extends Component {
         const now = new Date().yyyymmdd();
 
         this.state = {
-            status: true,
-            message: '',
             date: now,
             maxDate: now,
             workroom: '',
@@ -26,7 +24,6 @@ export class Home extends Component {
         this.onWorkroomChanged = this.onWorkroomChanged.bind(this);
         this.onWeightKeyDown = this.onWeightKeyDown.bind(this);
         this.onWeightChanged = this.onWeightChanged.bind(this);
-        this.onStatusChanged = this.onStatusChanged.bind(this);
     }
 
     componentDidMount() {
@@ -77,7 +74,6 @@ export class Home extends Component {
 
     submitData(event) {
         event.preventDefault();
-        this.onStatusChanged(true, '');
 
         const date = this.state.date;
         const workroom = this.state.workroom;
@@ -121,23 +117,14 @@ export class Home extends Component {
         });
     }
 
-    onStatusChanged(status, message) {
-        this.setState({
-            status: status,
-            message: message
-        });
-    }
-
     render() {
-        const message = this.state.message;
         const dateIsValid = this.state.dateIsValid;
         const workroomIsValid = this.state.workroomIsValid;
         const weightIsValid = this.state.weightIsValid;
 
         return (
             <div>
-                <h4>작업량 입력</h4>
-                {message != '' && <div className={this.state.status ? 'alert alert-success' : 'alert alert-danger'} >{message}</div>}
+                <h4 className='form-label'>작업량 입력</h4>
                 <form onSubmit={this.submitData}>
                     <div className='form-group'>
                         <label>날짜:</label>
@@ -159,7 +146,9 @@ export class Home extends Component {
                         <input className={weightIsValid ? 'form-control' : 'form-control validation-control'} type='number' max='1.7976931348623157E+308' min='0' value={this.state.weight} onKeyDown={this.onWeightKeyDown} onChange={this.onWeightChanged} />
                         {!weightIsValid && <div className='validation-message'>중량을 입력해주십시오</div>}
                     </div>
-                    <input className='btn btn-primary' type='submit' value='제출하기' />
+                    <div className='form-submit'>
+                        <input className='btn btn-primary form-btn' type='submit' value='제출하기' />
+                    </div>
                 </form>
             </div>
         );
@@ -201,10 +190,10 @@ export class Home extends Component {
         });
         if (!response.ok) {
             console.log(response);
-            this.onStatusChanged(false, '전송 실패');
+            this.props.onStatusChanged(false, '전송 실패');
             return;
         }
 
-        this.onStatusChanged(true, '전송이 완료되었습니다');
+        this.props.onStatusChanged(true, '전송이 완료되었습니다');
     }
 }

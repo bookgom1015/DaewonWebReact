@@ -16,7 +16,9 @@ export class ShowChart extends Component {
             selectedYear: -1,
             selectedMonth: -1,
             selectedDay: -1,
-            title: '연간 차트',            
+            title: '연간 차트', 
+            dateSuffix: '년',
+            dataSuffix: 't',           
         }
 
         this.onSelectedDateChanged = this.onSelectedDateChanged.bind(this);
@@ -34,16 +36,30 @@ export class ShowChart extends Component {
         this.populateData(this.state.data, selectedYear, selectedMonth, selectedDay);
 
         let title;
-        if (selectedYear == -1) title = '연간 차트';
-        else if (selectedMonth == -1) title = '월간 차트';
-        else if (selectedDay == -1) title = '일간 차트';
-        else title = '일일 차트';
+        let dateSuffix;
+        if (selectedYear == -1) {
+            title = '연간 차트';
+            dateSuffix = '년';
+        }
+        else if (selectedMonth == -1) {
+            title = '월간 차트';
+            dateSuffix = '월';
+        }
+        else if (selectedDay == -1) {
+            title = '일간 차트';
+            dateSuffix = '일';
+        }
+        else {
+            title = '일일 차트';
+            dateSuffix = '일';
+        }
 
         this.setState({
             selectedYear: selectedYear,
             selectedMonth: selectedMonth,
             selectedDay: selectedDay,
             title: title,
+            dateSuffix: dateSuffix,
         });
     }
 
@@ -53,10 +69,11 @@ export class ShowChart extends Component {
 
         return (
             this.state.data != null ?
-            <div>
+            <div className='show-chart-wrapper'>
                 <div id='chart-panel-wrapper'>
                     {datasets != null && labels != null && 
-                    <ChartPanel token={this.props.token} datasets={datasets} labels={labels} title={this.state.title} />
+                    <ChartPanel token={this.props.token} datasets={datasets} labels={labels} title={this.state.title} 
+                        dateSuffix={this.state.dateSuffix} dataSuffix={this.state.dataSuffix} />
                     }
                 </div>
                 {this.state.dates != null &&

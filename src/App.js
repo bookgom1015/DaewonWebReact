@@ -18,6 +18,10 @@ function parseJwt (token) {
   return JSON.parse(jsonPayload);
 };
 
+const tokenName = 'dwc_token';
+let tokenTimer = null;
+let msgTimer = null;
+
 export default class App extends Component {
   constructor(props) {
     super(props);
@@ -31,7 +35,7 @@ export default class App extends Component {
           (dd > 9 ? '' : '0') + dd];
     };
 
-    let token = localStorage.getItem('token');
+    let token = localStorage.getItem(tokenName);
     let isAdmin = false;
     let lifeTime = 0;
 
@@ -46,17 +50,21 @@ export default class App extends Component {
       if (lifeTime <= 0) {
         token = null;
         isAdmin = false;
+        localStorage.removeItem(tokenName);
       }
     }
 
     this.state = {
       token: token,
       isAdmin: isAdmin,
+      status: false,
+      message: '',
       expired: false,
       lifeTime: lifeTime > 3600000 ? lifeTime - 3600000 : lifeTime,
     };
 
     this.onTokenChanged = this.onTokenChanged.bind(this);
+    this.onStatusChanged = this.onStatusChanged.bind(this);
   }
 
   componentDidMount() {
@@ -69,6 +77,8 @@ export default class App extends Component {
 
   onTokenChanged(token) {
     if (token != null) {
+      localStorage.setItem(tokenName, token); 
+
       const parsed = parseJwt(token);
       this.setState({
         token: token,
@@ -78,17 +88,41 @@ export default class App extends Component {
       const expTime = parsed['exp'];
       const expDate = new Date(expTime * 1000);
       const lifeTime = expDate - Date.now() - 3600000;      
-      setTimeout(() => this.setState({
-        expired: true
-      }), lifeTime);
+      tokenTimer = setTimeout(() => {
+        tokenTimer = null;
+        this.setState({
+          expired: true
+        });
+      }, lifeTime);
     }
     else {
+      if (tokenTimer != null) clearTimeout(tokenTimer);
+      localStorage.removeItem(tokenName);
+
       this.setState({
         token: null,
         isAdmin: false,
-      });
+      });      
     }
   }
+
+  onStatusChanged(status, message) {
+    if (message != '') {
+      if (msgTimer != null) clearTimeout(msgTimer);
+
+      msgTimer = setTimeout(() => {
+        msgTimer = null;
+        this.setState({
+          message: ''
+        });
+      }, 3000);
+    }
+
+    this.setState({
+        status: status,
+        message: message
+    });
+}
   
   render() {
     if (this.state.expired) {
@@ -99,14 +133,14 @@ export default class App extends Component {
     }
 
     const token = this.state.token;
-    const home = token != null ? <Home token={token} /> : <Navigate replace to='/login' />;
-    const login = token == null ? <Login onTokenChanged={this.onTokenChanged} /> : <Navigate replace to='/' />;
-    const logout = token != null ? <Logout onTokenChanged={this.onTokenChanged} /> : <Navigate replace to='/login' />;
-    const admin = token != null ? <Admin token={token} /> : <Navigate replace to='/login' />;
-    const chart = token != null ? <ShowChart token={token} /> : <Navigate replace to='/login' />;
+    const home = token != null ? <Home token={token} onStatusChanged={this.onStatusChanged} /> : <Navigate replace to='/login' />;
+    const login = token == null ? <Login onTokenChanged={this.onTokenChanged} onStatusChanged={this.onStatusChanged} /> : <Navigate replace to='/' />;
+    const logout = token != null ? <Logout token={token} onTokenChanged={this.onTokenChanged} /> : <Navigate replace to='/login' />;
+    const admin = token != null ? <Admin token={token} onStatusChanged={this.onStatusChanged} /> : <Navigate replace to='/login' />;
+    const chart = token != null ? <ShowChart token={token} onStatusChanged={this.onStatusChanged} /> : <Navigate replace to='/login' />;
     
     return (
-      <Layout isAdmin={this.state.isAdmin}>
+      <Layout token={this.state.token} isAdmin={this.state.isAdmin} status={this.state.status} message={this.state.message}>
         <Routes> 
           <Route exact path='/' element={home} />
           <Route path='/login' element={login} />

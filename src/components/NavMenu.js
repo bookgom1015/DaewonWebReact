@@ -20,8 +20,6 @@ export class NavMenu extends Component {
     }
 
     render() {
-        const token = localStorage.getItem('token');
-        
         return (
             <header>
                 <Navbar className='navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3' light>
@@ -29,7 +27,7 @@ export class NavMenu extends Component {
                         <NavbarBrand>대원강업</NavbarBrand>
                         <NavbarToggler onClick={this.toggleNavbar} className='mr-2' />
                         <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!this.state.collapsed} navbar>
-                            {token != null &&
+                            {this.props.token != null &&
                             <ul className='navbar-nav flex-glow'>
                                 <NavItem>
                                     <NavLink tag={Link} className="text-primary" to="/">홈으로</NavLink>

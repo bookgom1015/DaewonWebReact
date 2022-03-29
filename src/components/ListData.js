@@ -7,8 +7,6 @@ export class ListData extends Component {
         super(props);
 
         this.state = {
-            status: true,
-            message: '',
             data: null,
             specData: null,
         };
@@ -21,7 +19,7 @@ export class ListData extends Component {
     }
 
     componentDidMount() {
-        this.fetchData();
+        this.populateData();
     }
 
     onBackBtnClicked() {
@@ -30,13 +28,11 @@ export class ListData extends Component {
 
     onEditBtnClicked(data) {
         this.setState({
-            message: '',
             specData: data
         });
     }
 
     onDeleteBtnClicked(data) {
-        this.onStatusChanged(true, '');
         const status = window.confirm('정말로 삭제하시겠습니까?');
         if (status) this.deleteData(data['id']);
     }
@@ -48,22 +44,17 @@ export class ListData extends Component {
     }
 
     onStatusChanged(status, message) {
-        this.fetchData();
-        this.setState({
-            status: status,
-            message: message
-        });
+        this.populateData();
+        this.props.onStatusChanged(status, message);
     }
 
     render() {
-        const message = this.state.message;
         const data = this.state.data;
         const specData = this.state.specData;
 
         return (
             <div>
-                <h4>데이터 수정</h4>
-                {message != '' && <div className={this.state.status ? 'alert alert-success' : 'alert alert-danger'} >{message}</div>}
+                <h4 className='form-label'>데이터 수정</h4>
                 {specData == null && <button className='btn btn-secondary back-btn' onClick={this.onBackBtnClicked}>돌아가기</button>}
                 {data == null ? <div>Now Loading...</div> :
                 specData == null ?                
@@ -100,7 +91,7 @@ export class ListData extends Component {
         );
     }
 
-    async fetchData() {
+    async populateData() {
         const response = await fetch('api/data', {
             method: 'GET',
             headers: {
@@ -136,7 +127,7 @@ export class ListData extends Component {
             return;
         }
 
-        this.fetchData();
+        this.populateData();
         this.onStatusChanged(true, '삭제가 완료되었습니다');
     }
 }
