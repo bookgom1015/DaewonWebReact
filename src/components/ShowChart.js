@@ -98,6 +98,7 @@ export class ShowChart extends Component {
         });
         if (!response.ok) {
             console.log(response);
+            this.props.onStatusChanged('failed', '데이터 불러오기 실패');
             return;
         }
 

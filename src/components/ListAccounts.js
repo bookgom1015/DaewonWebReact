@@ -39,7 +39,10 @@ export class ListAccounts extends Component {
 
     onDeleteBtnClicked(account) {
         const status = window.confirm('정말로 삭제하시겠습니까?');
-        if (status) this.deleteAccount(account['id']);
+        if (status) {
+            this.props.onStatusChanged('processing', '삭제 중...');
+            this.deleteAccount(account['id']);
+        }
     }
 
     render() {
@@ -89,7 +92,7 @@ export class ListAccounts extends Component {
         });
         if (!response.ok) {
             console.log(response);
-            this.onStatusChanged(false, '데이터 불러오기 실패');
+            this.props.onStatusChanged('failed', '데이터 불러오기 실패');
             return;
         }
 
@@ -112,11 +115,11 @@ export class ListAccounts extends Component {
         });
         if (!response.ok) {
             console.log(response);
-            this.onStatusChanged(false, '삭제 실패');
+            this.props.onStatusChanged('failed', '삭제 실패');
             return;
         }
 
         this.populateAccounts();
-        this.props.onStatusChanged(true, '삭제가 완료되었습니다');
+        this.props.onStatusChanged('failed', '삭제가 완료되었습니다');
     }
 }

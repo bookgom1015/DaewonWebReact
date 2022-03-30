@@ -6,34 +6,33 @@ export class Login extends Component {
         super(props);
 
         this.state = {
-            id: '',
-            pwd: '',
+            userId: '',
+            userPwd: '',
             idIsValid: true,
             pwdIsValid: true,
         };
 
-        this.onIdChanged = this.onIdChanged.bind(this);
-        this.onPwdChanged = this.onPwdChanged.bind(this);
+        this.onUserIdChanged = this.onUserIdChanged.bind(this);
+        this.onUserPwdChanged = this.onUserPwdChanged.bind(this);
         this.submit = this.submit.bind(this);
     }
 
-    onIdChanged(event) {
+    onUserIdChanged(event) {
         this.setState({
-            id: event.target.value
+            userId: event.target.value
         });
     }
 
-    onPwdChanged(event) {
+    onUserPwdChanged(event) {
         this.setState({
-            pwd: event.target.value
+            userPwd: event.target.value
         });
     }
 
-    submit(event) {
-        event.preventDefault();
+    validate(userId, userPwd) {
         let isValid = true;
 
-        if (this.state.id == '') {
+        if (userId == '') {
             this.setState({
                 idIsValid: false
             });
@@ -44,7 +43,7 @@ export class Login extends Component {
                 idIsValid: true
             });
         }        
-        if (this.state.pwd == '') {
+        if (userPwd == '') {
             this.setState({
                 pwdIsValid: false
             });
@@ -55,13 +54,24 @@ export class Login extends Component {
                 pwdIsValid: true
             });
         }
-        if (!isValid) return;
 
-        this.authorize();
+        return isValid;
     }
 
-    succeededToLogin(token) {
-        this.props.onTokenChanged(token);
+    submit(event) {
+        event.preventDefault();
+
+        const userId = this.state.userId;
+        const userPwd = this.state.userPwd;
+        
+        if (!this.validate(userId, userPwd));
+
+        this.props.onStatusChanged('processing', '로그인 중...');
+        this.authorize(userId, userPwd);
+
+        this.setState({
+            userPwd: ''
+        });
     }
 
     render() {
@@ -74,12 +84,12 @@ export class Login extends Component {
                 <form onSubmit={this.submit}>
                     <div className='form-group'>
                         <label>아이디:</label>
-                        <input className={idIsValid ? 'form-control' : 'form-control validation-control'} type='text' value={this.state.id} onChange={this.onIdChanged} />
+                        <input className={idIsValid ? 'form-control' : 'form-control validation-control'} type='text' value={this.state.userId} onChange={this.onUserIdChanged} />
                         {!idIsValid && <div className='validation-message'>아이디를 입력해주십시오</div>}
                     </div>
                     <div className='form-group'>
                         <label>패스워드</label>
-                        <input className={pwdIsValid ? 'form-control' : 'form-control validation-control'} type='password' value={this.state.pwd} onChange={this.onPwdChanged} />
+                        <input className={pwdIsValid ? 'form-control' : 'form-control validation-control'} type='password' value={this.state.userPwd} onChange={this.onUserPwdChanged} />
                         {!pwdIsValid && <div className='validation-message'>패스워드를 입력해주십시오</div>}
                     </div>
                     <div className='form-submit'>
@@ -90,27 +100,26 @@ export class Login extends Component {
         );
     }
 
-    async authorize() {
+    async authorize(userId, userPwd) {
         const response = await fetch('/api/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                'userId': this.state.id + '',
-                'userPassword': this.state.pwd + ''
+                'userId': userId + '',
+                'userPassword': userPwd + ''
             })
         });
         if (!response.ok) {
-            this.props.onStatusChanged(false, '아이디 또는 비밀번호가 일치하지 않습니다');
-            this.setState({
-                pwd: ''
-            });
+            this.props.onStatusChanged('failed', '아이디 또는 비밀번호가 일치하지 않습니다');
             return;
         }
 
         const data = await response.json();
-        const token = data['key'];       
-        this.succeededToLogin(token);
+        const token = data['key'];
+        
+        this.props.onStatusChanged('succeeded', '로그인 성공');
+        this.props.onTokenChanged(token);
     }
 }

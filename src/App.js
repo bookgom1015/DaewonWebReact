@@ -57,7 +57,7 @@ export default class App extends Component {
     this.state = {
       token: token,
       isAdmin: isAdmin,
-      status: false,
+      status: 'failed',
       message: '',
       expired: false,
       lifeTime: lifeTime > 3600000 ? lifeTime - 3600000 : lifeTime,
@@ -135,7 +135,7 @@ export default class App extends Component {
     const token = this.state.token;
     const home = token != null ? <Home token={token} onStatusChanged={this.onStatusChanged} /> : <Navigate replace to='/login' />;
     const login = token == null ? <Login onTokenChanged={this.onTokenChanged} onStatusChanged={this.onStatusChanged} /> : <Navigate replace to='/' />;
-    const logout = token != null ? <Logout token={token} onTokenChanged={this.onTokenChanged} /> : <Navigate replace to='/login' />;
+    const logout = token != null ? <Logout token={token} onTokenChanged={this.onTokenChanged} onStatusChanged={this.onStatusChanged} /> : <Navigate replace to='/login' />;
     const admin = token != null ? <Admin token={token} onStatusChanged={this.onStatusChanged} /> : <Navigate replace to='/login' />;
     const chart = token != null ? <ShowChart token={token} onStatusChanged={this.onStatusChanged} /> : <Navigate replace to='/login' />;
     

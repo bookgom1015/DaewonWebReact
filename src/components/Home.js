@@ -80,6 +80,8 @@ export class Home extends Component {
         const weight = this.state.weight;
 
         if (!this.validate(date, workroom, weight)) return;
+
+        this.props.onStatusChanged('processing', '전송 중...');
         this.sendData(date, workroom, weight);
 
         this.setState({
@@ -190,10 +192,10 @@ export class Home extends Component {
         });
         if (!response.ok) {
             console.log(response);
-            this.props.onStatusChanged(false, '전송 실패');
+            this.props.onStatusChanged('failed', '전송 실패');
             return;
         }
 
-        this.props.onStatusChanged(true, '전송이 완료되었습니다');
+        this.props.onStatusChanged('succeeded', '전송이 완료되었습니다');
     }
 }

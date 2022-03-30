@@ -85,6 +85,8 @@ export class EditData extends Component {
         const weight = this.state.weight;
 
         if (!this.validate(date, workroom, weight)) return;
+
+        this.props.onStatusChanged('processing', '수정 중...');
         this.editData(id, date, workroom, weight);
     }
 
@@ -164,7 +166,7 @@ export class EditData extends Component {
         });
         if (!response.ok) {
             console.log(response);
-            this.props.onStatusChanged(false, '데이터 불러오기 실패');
+            this.props.onStatusChanged('failed', '데이터 불러오기 실패');
             this.props.onSpecDataReseted();
             return;
         }
@@ -194,11 +196,11 @@ export class EditData extends Component {
         });
         if (!response.ok) {
             console.log(response);
-            this.props.onStatusChanged(false, '수정 실패');
+            this.props.onStatusChanged('failed', '수정 실패');
             return;
         }
 
-        this.props.onStatusChanged(true, '수정이 완료되었습니다');
+        this.props.onStatusChanged('succeeded', '수정이 완료되었습니다');
         this.props.onSpecDataReseted();
     }
 }

@@ -9,10 +9,16 @@ export class MsgPanel extends Component {
 
     render() {
         const message = this.props.message;
+        const status = this.props.status;
+        let divClass = '';
+        if (status == 'succeeded') divClass = 'alert alert-success';
+        else if (status == 'failed') divClass = 'alert alert-danger';
+        else if (status == 'processing') divClass = 'alert alert-secondary';
 
         return (
+            message != '' && 
             <div id='msg-panel-wrapper'>
-                {message != '' && <div className={this.props.status ? 'alert alert-success' : 'alert alert-danger'} >{message}</div>}
+                <div className={divClass} >{message}</div>
             </div>
         );
     }

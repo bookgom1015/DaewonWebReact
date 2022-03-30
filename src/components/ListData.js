@@ -15,7 +15,6 @@ export class ListData extends Component {
         this.onEditBtnClicked = this.onEditBtnClicked.bind(this);
         this.onDeleteBtnClicked = this.onDeleteBtnClicked.bind(this);
         this.onSpecDataReseted = this.onSpecDataReseted.bind(this);
-        this.onStatusChanged = this.onStatusChanged.bind(this);
     }
 
     componentDidMount() {
@@ -34,18 +33,17 @@ export class ListData extends Component {
 
     onDeleteBtnClicked(data) {
         const status = window.confirm('정말로 삭제하시겠습니까?');
-        if (status) this.deleteData(data['id']);
+        if (status) {
+            this.props.onStatusChanged('processing', '삭제 중...');
+            this.deleteData(data['id']);
+        }
     }
 
     onSpecDataReseted() {
+        this.populateData();
         this.setState({
             specData: null
         });
-    }
-
-    onStatusChanged(status, message) {
-        this.populateData();
-        this.props.onStatusChanged(status, message);
     }
 
     render() {
@@ -83,7 +81,7 @@ export class ListData extends Component {
                         </tbody>
                     </table>
                 </div> :
-                <EditData token={this.props.token} data={specData} onSpecDataReseted={this.onSpecDataReseted} onStatusChanged={this.onStatusChanged} />
+                <EditData token={this.props.token} data={specData} onSpecDataReseted={this.onSpecDataReseted} onStatusChanged={this.props.onStatusChanged} />
                 }
                 <br />
                 <br />
@@ -100,7 +98,7 @@ export class ListData extends Component {
         });
         if (!response.ok) {
             console.log(response);
-            this.onStatusChanged(true, '데이터 불러오기 실패');
+            this.props.onStatusChanged('failed', '데이터 불러오기 실패');
             return;
         }
 
@@ -123,11 +121,11 @@ export class ListData extends Component {
         });
         if (!response.ok) {
             console.log(response);
-            this.onStatusChanged(true, '삭제 실패');
+            this.props.onStatusChanged('failed', '삭제 실패');
             return;
         }
 
         this.populateData();
-        this.onStatusChanged(true, '삭제가 완료되었습니다');
+        this.props.onStatusChanged('succeeded', '삭제가 완료되었습니다');
     }
 }

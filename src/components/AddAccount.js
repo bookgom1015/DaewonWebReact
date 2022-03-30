@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Navigate } from 'react-router-dom';
+import removeSpecChars from './StringUtils';
 
 export class AddAccount extends Component {
     constructor(props) {
@@ -23,10 +23,10 @@ export class AddAccount extends Component {
         this.props.onPathChanged('/');
     }
 
-    validate(id, pwd) {
+    validate(userId, userPwd) {
         let isValid = true;
 
-        if (id == '') {
+        if (userId == '') {
             this.setState({
                 idIsValid: false
             });
@@ -38,7 +38,7 @@ export class AddAccount extends Component {
             });
         }
 
-        if (pwd == '') {
+        if (userPwd == '') {
             this.setState({
                 pwdIsValid: false
             });
@@ -56,19 +56,22 @@ export class AddAccount extends Component {
     submitWorkroom(event) {
         event.preventDefault();
 
-        const id = this.state.userId;
-        const pwd = this.state.userPwd;
-        if (!this.validate(id, pwd)) return;
+        const userId = this.state.userId;
+        const userPwd = this.state.userPwd;
+        if (!this.validate(userId, userPwd)) return;
 
-        this.addAccount(id, pwd);
+        this.props.onStatusChanged('processing', '생성 중...');
+        this.addAccount(userId, userPwd);
     }
 
     onUserIdChanged(event) {
         const value = event.target.value;
         if (value.length >= 16) return;
 
+        const parsed = removeSpecChars(value);
+
         this.setState({
-            userId: value
+            userId: parsed
         });
     }
 
@@ -76,8 +79,10 @@ export class AddAccount extends Component {
         const value = event.target.value;
         if (value.length >= 16) return;
 
+        const parsed = removeSpecChars(value);
+
         this.setState({
-            userPwd: value
+            userPwd: parsed
         });
     }
 
@@ -117,7 +122,7 @@ export class AddAccount extends Component {
         );
     }
 
-    async addAccount(id, pwd) {
+    async addAccount(userId, userPwd) {
         const response = await fetch('api/user', {
             method: 'POST',
             headers: {
@@ -125,17 +130,17 @@ export class AddAccount extends Component {
                 'Authorization': this.props.token + ''
             },
             body: JSON.stringify({
-                'userName': id + '',
-                'userPassword': pwd + '',
+                'userName': userId + '',
+                'userPassword': userPwd + '',
             })
         });
         if (!response.ok) {
             console.log(response);
-            this.props.onStatusChanged(false, '전송 실패');
+            this.props.onStatusChanged('failed', '생성 실패');
             return;
         }
 
-        this.props.onStatusChanged(true, '계정 생성이 완료되었습니다');
+        this.props.onStatusChanged('succeeded', '계정 생성이 완료되었습니다');
         this.props.onPathChanged('/');
     }
 }

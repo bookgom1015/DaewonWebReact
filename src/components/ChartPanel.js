@@ -151,7 +151,7 @@ export class ChartPanel extends Component {
     });
     if (!response.ok) {
         console.log(response);
-        this.props.onStatusChanged(false, '데이터 불러오기 실패');
+        this.props.onStatusChanged('failed', '데이터 불러오기 실패');
         return;
     }
 

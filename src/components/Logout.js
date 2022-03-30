@@ -13,6 +13,7 @@ export class Logout extends Component {
     componentDidMount() {
         if (this.props.token == null) return;
         
+        this.props.onStatusChanged('succeeded', '로그아웃 완료');
         this.props.onTokenChanged(null);
         this.setState({
             loggedOut: true

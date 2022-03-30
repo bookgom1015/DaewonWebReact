@@ -1,11 +1,5 @@
 import React, { Component } from 'react';
-
-function removeSpeicalCharacters(str){  
-    var reg = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi
-    if(reg.test(str)) return str.replace(reg, "");
-    
-    return str;
-}
+import removeSpecChars from './StringUtils';
 
 export class EditAccount extends Component {
     constructor(props) {
@@ -26,10 +20,10 @@ export class EditAccount extends Component {
         this.props.onAccountReseted();
     }
 
-    validate(pwd) {
+    validate(userPwd) {
         let isValid = true;
 
-        if (pwd == '') {
+        if (userPwd == '') {
             this.setState({
                 pwdIsValid: false
             });
@@ -50,6 +44,8 @@ export class EditAccount extends Component {
         const userPwd = this.state.userPwd;
         if (!this.validate(userPwd)) return;
 
+        this.props.onStatusChanged('processing', '수정 중...');
+
         const id = this.props.account['id'];
         this.sendAccount(id, userPwd);
     }
@@ -58,7 +54,7 @@ export class EditAccount extends Component {
         const value = event.target.value;
         if (value.length >= 16) return;
 
-        const parsedPwd = removeSpeicalCharacters(value);
+        const parsedPwd = removeSpecChars(value);
 
         this.setState({
             userPwd: parsedPwd
@@ -112,12 +108,11 @@ export class EditAccount extends Component {
         });
         if (!response.ok) {
             console.log(response);
-            this.props.onStatusChanged(false, '수정 실패');
+            this.props.onStatusChanged('failed', '수정 실패');
             return;
         }
 
-        const data = response.json();
-        this.props.onStatusChanged(true, '수정이 완료되었습니다');
+        this.props.onStatusChanged('succeeded', '수정이 완료되었습니다');
         this.props.onAccountReseted();
     }
 }
