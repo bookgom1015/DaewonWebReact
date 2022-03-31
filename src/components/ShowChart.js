@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Navigate } from 'react-router-dom';
 import { DateNave } from './DateNav';
 import { ChartPanel } from './ChartPanel';
+import validateResponse from './ValidateResponse';
 import './ShowChart.css'
 
 export class ShowChart extends Component {
@@ -72,7 +73,7 @@ export class ShowChart extends Component {
             <div className='show-chart-wrapper'>
                 <div id='chart-panel-wrapper'>
                     {datasets != null && labels != null && 
-                    <ChartPanel token={this.props.token} datasets={datasets} labels={labels} title={this.state.title} 
+                    <ChartPanel token={this.props.token} onStatusChanged={this.props.onStatusChanged} datasets={datasets} labels={labels} title={this.state.title} 
                         dateSuffix={this.state.dateSuffix} dataSuffix={this.state.dataSuffix} />
                     }
                 </div>
@@ -90,20 +91,20 @@ export class ShowChart extends Component {
     }
 
     async fetchData() {
-        const response = await fetch('api/data', {
+        const response = await fetch('api/steel', {
             method: 'GET',
             headers: {
-                'Authorization': this.props.token
+                'Authorization': 'Bearer ' + this.props.token
             }
         });
         if (!response.ok) {
-            console.log(response);
+            validateResponse(response);
             this.props.onStatusChanged('failed', '데이터 불러오기 실패');
             return;
         }
 
         const data = await response.json();
-        const innerData = data['data'];
+        const innerData = data;
         this.setState({
             data: innerData 
         });
@@ -131,7 +132,7 @@ export class ShowChart extends Component {
         for (const idx in data) {
             const specData = data[idx];
             const date = specData['date'] + '';
-            const workroom = specData['stationName'] + '';
+            const workroom = specData['workroom'] + '';
             const weight = specData['weight'];
 
             const year = date.substring(0, 4);

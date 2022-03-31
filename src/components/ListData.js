@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { EditData } from './EditData';
+import validateResponse from './ValidateResponse';
 import './ListData.css';
 
 export class ListData extends Component {
@@ -35,7 +36,7 @@ export class ListData extends Component {
         const status = window.confirm('정말로 삭제하시겠습니까?');
         if (status) {
             this.props.onStatusChanged('processing', '삭제 중...');
-            this.deleteData(data['id']);
+            this.deleteData(data['uid']);
         }
     }
 
@@ -70,7 +71,7 @@ export class ListData extends Component {
                             {data.map((data, index) =>
                             <tr key={index} className={index % 2 == 0 ? 'even' : ''}>
                                 <td>{data['date']}</td>
-                                <td>{data['stationName']}</td>
+                                <td>{data['workroom']}</td>
                                 <td>{data['weight']}</td>
                                 <td>
                                     <button className='btn btn-secondary' onClick={() => this.onEditBtnClicked(data)}>수정</button>
@@ -90,37 +91,37 @@ export class ListData extends Component {
     }
 
     async populateData() {
-        const response = await fetch('api/data', {
+        const response = await fetch('api/steel', {
             method: 'GET',
             headers: {
-                'Authorization': this.props.token
+                'Authorization': 'Bearer ' + this.props.token
             }
         });
         if (!response.ok) {
-            console.log(response);
+            validateResponse(response);
             this.props.onStatusChanged('failed', '데이터 불러오기 실패');
             return;
         }
 
         const data = await response.json();
         this.setState({
-            data: data['data']
+            data: data
         });
     }
 
-    async deleteData(id) {
-        const response = await fetch('api/data', {
+    async deleteData(uid) {
+        const response = await fetch('api/steel', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': this.props.token
+                'Authorization': 'Bearer ' + this.props.token
             },
             body: JSON.stringify({
-                'id': id
+                'uid': uid
             })
         });
         if (!response.ok) {
-            console.log(response);
+            validateResponse(response);
             this.props.onStatusChanged('failed', '삭제 실패');
             return;
         }

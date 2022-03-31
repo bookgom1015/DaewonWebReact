@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Chart, registerables } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import { Mobile, PC } from './DeviceInfo.tsx';
+import validateResponse from './ValidateResponse';
 
 Chart.register(...registerables);
 
@@ -143,23 +144,23 @@ export class ChartPanel extends Component {
   }
   
   async populateWorkrooms() {
-    const response = await fetch('api/station', {
+    const response = await fetch('api/workroom', {
         method: 'GET',
         headers: {
-            'Authorization': this.props.token + ''
+            'Authorization': 'Bearer ' + this.props.token
         }
     });
     if (!response.ok) {
-        console.log(response);
+        validateResponse(response);
         this.props.onStatusChanged('failed', '데이터 불러오기 실패');
         return;
     }
 
     const data = await response.json();
-    const stationList = data['stationList'];
+    const workrooms = data;
     let map = new Map();
-    for (const idx in stationList) {
-        map.set(stationList[idx]['name'], stationList[idx]['id']);
+    for (const idx in workrooms) {
+        map.set(workrooms[idx]['name'], workrooms[idx]['uid']);
     }
 
     this.setState({

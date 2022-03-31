@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import removeSpecChars from './StringUtils';
+import validateResponse from './ValidateResponse';
 
 export class AddWorkroom extends Component {
     constructor(props) {
@@ -50,8 +52,10 @@ export class AddWorkroom extends Component {
         const value = event.target.value;
         if (value.length >= 16) return;
 
+        const parsed = removeSpecChars(value);
+
         this.setState({
-            workroomName: value
+            workroomName: parsed
         });
     }
 
@@ -78,18 +82,18 @@ export class AddWorkroom extends Component {
     }
 
     async sendWorkroom(workroomName) {
-        const response = await fetch('api/station', {
+        const response = await fetch('api/workroom', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': this.props.token + ''
+                'Authorization': 'Bearer ' + this.props.token
             },
             body: JSON.stringify({
                 'name': workroomName + '',
             })
         });
         if (!response.ok) {
-            console.log(response);
+            validateResponse(response);
             this.props.onStatusChanged('failed', '추가 실패');
             return;
         }

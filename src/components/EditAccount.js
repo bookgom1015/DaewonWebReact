@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import removeSpecChars from './StringUtils';
+import validateResponse from './ValidateResponse';
 
 export class EditAccount extends Component {
     constructor(props) {
@@ -46,8 +47,9 @@ export class EditAccount extends Component {
 
         this.props.onStatusChanged('processing', '수정 중...');
 
-        const id = this.props.account['id'];
-        this.sendAccount(id, userPwd);
+        const uid = this.props.account['uid'];
+        const userId = this.props.account['user_id'];
+        this.sendAccount(uid, userId, userPwd);
     }
 
     onUserPwdChanged(event) {
@@ -78,7 +80,7 @@ export class EditAccount extends Component {
                 <form onSubmit={this.submitAccount}>
                     <div className='form-group'>
                         <label>아이디:</label>
-                        <input className='form-control' type='text' value={this.props.account['userName']} readOnly />
+                        <input className='form-control' type='text' value={this.props.account['user_id']} readOnly />
                     </div>
                     <div className='form-group'>
                         <label>패스워드:</label>
@@ -94,20 +96,21 @@ export class EditAccount extends Component {
         );
     }
     
-    async sendAccount(id, userPwd) {
+    async sendAccount(uid, userId, userPwd) {
         const response = await fetch('api/user', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': this.props.token
+                'Authorization': 'Bearer ' + this.props.token
             },
             body: JSON.stringify({
-                'id': id + '',
-                'userPassword': userPwd + '',
+                'uid': uid + '',
+                'user_id': userId + '',
+                'user_pwd': userPwd + '',
             })
         });
         if (!response.ok) {
-            console.log(response);
+            await validateResponse(response);
             this.props.onStatusChanged('failed', '수정 실패');
             return;
         }

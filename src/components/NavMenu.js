@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Collapse, Container, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import { tokenName, role, adminRole, userRole, exp, expDiff } from './config';
 import './NavMenu.css';
 
 export class NavMenu extends Component {
@@ -35,7 +36,7 @@ export class NavMenu extends Component {
                                 <NavItem>
                                     <NavLink tag={Link} className="text-primary" to="/chart">차트보기</NavLink>
                                 </NavItem>
-                                {this.props.isAdmin &&
+                                {this.props.isAdmin == adminRole &&
                                 <NavItem>
                                     <NavLink tag={Link} className="text-primary" to="/admin">관리자</NavLink>
                                 </NavItem>

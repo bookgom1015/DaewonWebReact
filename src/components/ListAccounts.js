@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { EditAccount } from './EditAccount';
+import validateResponse from './ValidateResponse';
 import './ListAccount.css'
 
 export class ListAccounts extends Component {
@@ -41,7 +42,7 @@ export class ListAccounts extends Component {
         const status = window.confirm('정말로 삭제하시겠습니까?');
         if (status) {
             this.props.onStatusChanged('processing', '삭제 중...');
-            this.deleteAccount(account['id']);
+            this.deleteAccount(account['uid']);
         }
     }
 
@@ -65,10 +66,13 @@ export class ListAccounts extends Component {
                         <tbody>
                             {accounts.map((account, index) =>
                             <tr key={index} className={index % 2 == 0 ? 'even' : ''}>
-                                <td>{account['userName']}</td>
                                 <td>
-                                    <button className='btn btn-secondary' onClick={() => this.onEditBtnClicked(account)}>수정</button>
-                                    <button className='btn btn-danger' onClick={() => this.onDeleteBtnClicked(account)}>삭제</button>
+                                    {account['user_id']}
+                                    {account['is_admin'] && <span className='alert alert-primary admin-tag'>Admin</span>}
+                                </td>
+                                <td>
+                                    <button className='btn btn-secondary' disabled={account['is_admin']} onClick={() => this.onEditBtnClicked(account)}>수정</button>
+                                    <button className='btn btn-danger' disabled={account['is_admin']} onClick={() => this.onDeleteBtnClicked(account)}>삭제</button>
                                 </td>
                             </tr>
                             )}
@@ -87,34 +91,34 @@ export class ListAccounts extends Component {
         const response = await fetch('api/user', {
             method: 'GET',
             headers: {
-                'Authorization': this.props.token + ''
+                'Authorization': 'Bearer ' + this.props.token
             }            
         });
         if (!response.ok) {
-            console.log(response);
+            validateResponse(response);
             this.props.onStatusChanged('failed', '데이터 불러오기 실패');
             return;
         }
 
         const data = await response.json();
         this.setState({
-            accounts: data['userList']
+            accounts: data
         });
     }
 
-    async deleteAccount(id) {
+    async deleteAccount(uid) {
         const response = await fetch('api/user', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': this.props.token + ''
+                'Authorization': 'Bearer ' + this.props.token
             },
             body: JSON.stringify({
-                'id': id
+                'uid': uid
             })
         });
         if (!response.ok) {
-            console.log(response);
+            validateResponse(response);
             this.props.onStatusChanged('failed', '삭제 실패');
             return;
         }

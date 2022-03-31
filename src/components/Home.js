@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Navigate } from 'react-router-dom';
+import validateResponse from './ValidateResponse';
 import './Home.css';
 
 export class Home extends Component {
@@ -157,19 +158,20 @@ export class Home extends Component {
     }
 
     async populateWorkrooms() {
-        const response = await fetch('api/station', {
+        const response = await fetch('api/workroom', {
             method: 'GET',
             headers: {
-                'Authorization': this.props.token + ''
+                'Authorization': 'Bearer ' + this.props.token
             }
         });
         if (!response.ok) {
-            console.log(response);
+            validateResponse(response);
+            this.props.onStatusChanged('failed', '데이터 불러오기 실패');
             return;
         }
-
+        
         const data = await response.json();
-        const stationList = data['stationList'];
+        const stationList = data;
         for (const idx in stationList) {
             this.setState({
                 workrooms: this.state.workrooms.concat([stationList[idx]['name']])
@@ -178,20 +180,20 @@ export class Home extends Component {
     }
 
     async sendData(date, workroom, weight) {
-        const response = await fetch('api/data', {
+        const response = await fetch('api/steel', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': this.props.token + ''
+                'Authorization': 'Bearer ' + this.props.token
             },
             body: JSON.stringify({
-                'stationName': workroom + '',
+                'date': date + '',
+                'workroom': workroom + '',
                 'weight': weight + '',
-                'date': date + ''
             })
         });
         if (!response.ok) {
-            console.log(response);
+            validateResponse(response);
             this.props.onStatusChanged('failed', '전송 실패');
             return;
         }

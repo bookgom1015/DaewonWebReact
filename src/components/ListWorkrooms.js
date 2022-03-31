@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { EditWorkroom } from './EditWorkroom';
+import validateResponse from './ValidateResponse';
 import './ListWorkrooms.css';
 
 export class ListWorkrooms extends Component {
@@ -35,7 +36,7 @@ export class ListWorkrooms extends Component {
         const status = window.confirm('정말로 삭제하시겠습니까?');
         if (status) {
             this.props.onStatusChanged('processing', '삭제 중...');
-            this.deleteWorkroom(workroom['id']);
+            this.deleteWorkroom(workroom['uid']);
         }
     }
 
@@ -84,42 +85,42 @@ export class ListWorkrooms extends Component {
     }
 
     async populateWorkrooms() {
-        const response = await fetch('api/station', {
+        const response = await fetch('api/workroom', {
             method: 'GET',
             headers: {
-                'Authorization': this.props.token + ''
+                'Authorization': 'Bearer ' + this.props.token
             }
         });
         if (!response.ok) {
-            console.log(response);
+            validateResponse(response);
             this.props.onStatusChanged('failed', '데이터 불러오기 실패');
             return;
         }
 
         const data = await response.json();
         this.setState({
-            workrooms: data['stationList']
+            workrooms: data
         });
     }
 
-    async deleteWorkroom(id) {
-        const response = await fetch('api/station', {
+    async deleteWorkroom(uid) {
+        const response = await fetch('api/workroom', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': this.props.token + ''
+                'Authorization': 'Bearer ' + this.props.token
             },
             body: JSON.stringify({
-                'id': id
+                'uid': uid
             })
         });
         if (!response.ok) {
-            console.log(response);
+            validateResponse(response);
             this.props.onStatusChanged('failed', '삭제 실패');
             return;
         }
 
         this.populateWorkrooms();
-        this.props.onStatusChanged('failed', '삭제가 완료되었습니다');
+        this.props.onStatusChanged('succeeded', '삭제가 완료되었습니다');
     }
 }

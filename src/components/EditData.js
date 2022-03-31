@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import validateResponse from './ValidateResponse';
 
 export class EditData extends Component {
     constructor(props) {
@@ -7,10 +8,10 @@ export class EditData extends Component {
         const now = new Date().yyyymmdd();
 
         this.state = {
-            id: this.props.data['id'] + '',
+            uid: this.props.data['uid'] + '',
             date: this.props.data['date'] + '',
             maxDate: now,
-            workroom: this.props.data['stationName'] + '',
+            workroom: this.props.data['workroom'] + '',
             workrooms: [],
             weight: this.props.data['weight'] + '',
             dateIsValid: true,
@@ -79,7 +80,7 @@ export class EditData extends Component {
     submitData(event) {
         event.preventDefault();
 
-        const id = this.state.id;
+        const uid = this.state.uid;
         const date = this.state.date;
         const workroom = this.state.workroom;
         const weight = this.state.weight;
@@ -87,7 +88,7 @@ export class EditData extends Component {
         if (!this.validate(date, workroom, weight)) return;
 
         this.props.onStatusChanged('processing', '수정 중...');
-        this.editData(id, date, workroom, weight);
+        this.editData(uid, date, workroom, weight);
     }
 
     onDateChanged(event) {
@@ -158,44 +159,44 @@ export class EditData extends Component {
     }
 
     async populateWorkrooms() {
-        const response = await fetch('api/station', {
+        const response = await fetch('api/workroom', {
             method: 'GET',
             headers: {
-                'Authorization': this.props.token + ''
+                'Authorization': 'Bearer ' + this.props.token
             }
         });
         if (!response.ok) {
-            console.log(response);
+            validateResponse(response);
             this.props.onStatusChanged('failed', '데이터 불러오기 실패');
             this.props.onSpecDataReseted();
             return;
         }
 
         const data = await response.json();
-        const stationList = data['stationList'];
-            for (const idx in stationList) {
+        const workrooms = data;
+            for (const idx in workrooms) {
                 this.setState({
-                    workrooms: this.state.workrooms.concat([stationList[idx]['name']])
+                    workrooms: this.state.workrooms.concat([workrooms[idx]['name']])
                 })
             }
     }
 
-    async editData(id, date, workroom, weight) {
-        const response = await fetch('api/data', {
+    async editData(uid, date, workroom, weight) {
+        const response = await fetch('api/steel', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': this.props.token
+                'Authorization': 'Bearer ' + this.props.token
             },
             body: JSON.stringify({
-                'id': id + '',
-                'stationName': workroom + '',
+                'uid': Number(uid),
+                'date': date + '',
+                'workroom': workroom + '',
                 'weight': weight + '',
-                'date': date + ''
             })
         });
         if (!response.ok) {
-            console.log(response);
+            validateResponse(response);
             this.props.onStatusChanged('failed', '수정 실패');
             return;
         }

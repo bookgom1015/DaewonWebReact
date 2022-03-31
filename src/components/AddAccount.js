@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import removeSpecChars from './StringUtils';
+import validateResponse from './ValidateResponse';
 
 export class AddAccount extends Component {
     constructor(props) {
@@ -127,15 +128,15 @@ export class AddAccount extends Component {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': this.props.token + ''
+                'Authorization': 'Bearer ' + this.props.token
             },
             body: JSON.stringify({
-                'userName': userId + '',
-                'userPassword': userPwd + '',
+                'user_id': userId + '',
+                'user_pwd': userPwd + '',
             })
         });
         if (!response.ok) {
-            console.log(response);
+            validateResponse(response);
             this.props.onStatusChanged('failed', '생성 실패');
             return;
         }

@@ -108,16 +108,18 @@ export class Login extends Component {
             },
             body: JSON.stringify({
                 'userId': userId + '',
-                'userPassword': userPwd + ''
+                'userPwd': userPwd + ''
             })
         });
+
+        const data = await response.json();
         if (!response.ok) {
+            console.log(data);
             this.props.onStatusChanged('failed', '아이디 또는 비밀번호가 일치하지 않습니다');
             return;
         }
 
-        const data = await response.json();
-        const token = data['key'];
+        const token = data['token'];
         
         this.props.onStatusChanged('succeeded', '로그인 성공');
         this.props.onTokenChanged(token);

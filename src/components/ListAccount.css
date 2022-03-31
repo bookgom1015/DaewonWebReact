@@ -35,3 +35,9 @@ table[id='list-account-table'] tbody tr td:nth-child(2) {
         width: 80px;
     }    
 }
+
+.admin-tag {
+    font-size: 14px;
+    margin-left: 10px;
+    padding: 5px;
+}

@@ -7,6 +7,7 @@ import { ShowChart } from './components/ShowChart';
 import { Login } from './components/Login';
 import { Admin } from './components/Admin';
 import { Logout } from './components/Logout';
+import { tokenName, role, adminRole, userRole, exp, expDiff } from './components/config';
 
 function parseJwt (token) {
   var base64Url = token.split('.')[1];
@@ -18,7 +19,6 @@ function parseJwt (token) {
   return JSON.parse(jsonPayload);
 };
 
-const tokenName = 'dwc_token';
 let tokenTimer = null;
 let msgTimer = null;
 
@@ -36,20 +36,20 @@ export default class App extends Component {
     };
 
     let token = localStorage.getItem(tokenName);
-    let isAdmin = false;
+    let isAdmin = userRole;
     let lifeTime = 0;
 
     const parsed = token != null ? parseJwt(token) : null;
     if (parsed != null) {
-      isAdmin = parsed['isAdmin'];
+      isAdmin = parsed[role];
 
-      const expTime = parsed['exp'];
+      const expTime = parsed[exp];
       const expDate = new Date(expTime * 1000);
       lifeTime = expDate - Date.now();
 
       if (lifeTime <= 0) {
         token = null;
-        isAdmin = false;
+        isAdmin = userRole;
         localStorage.removeItem(tokenName);
       }
     }
@@ -59,19 +59,17 @@ export default class App extends Component {
       isAdmin: isAdmin,
       status: 'failed',
       message: '',
-      expired: false,
-      lifeTime: lifeTime > 3600000 ? lifeTime - 3600000 : lifeTime,
+      lifeTime: lifeTime > expDiff ? lifeTime - expDiff : lifeTime,
     };
 
     this.onTokenChanged = this.onTokenChanged.bind(this);
     this.onStatusChanged = this.onStatusChanged.bind(this);
+    this.setTokenTimer = this.setTokenTimer.bind(this);
   }
 
   componentDidMount() {
     if (this.state.token != null) {
-      setTimeout(() => this.setState({
-        expired: true
-      }), this.state.lifeTime);
+      this.setTokenTimer(this.state.lifeTime);
     }
   }
 
@@ -82,21 +80,18 @@ export default class App extends Component {
       const parsed = parseJwt(token);
       this.setState({
         token: token,
-        isAdmin: parsed['isAdmin'],
+        isAdmin: parsed[role],
       });
 
-      const expTime = parsed['exp'];
+      const expTime = parsed[exp];
       const expDate = new Date(expTime * 1000);
-      const lifeTime = expDate - Date.now() - 3600000;      
-      tokenTimer = setTimeout(() => {
-        tokenTimer = null;
-        this.setState({
-          expired: true
-        });
-      }, lifeTime);
+      const lifeTime = expDate - Date.now() - expDiff;   
+      
+      this.setTokenTimer(lifeTime);
     }
     else {
       if (tokenTimer != null) clearTimeout(tokenTimer);
+      tokenTimer = null;
       localStorage.removeItem(tokenName);
 
       this.setState({
@@ -122,21 +117,26 @@ export default class App extends Component {
         status: status,
         message: message
     });
-}
+  }
+
+  setTokenTimer(lifeTime) {
+    tokenTimer = setTimeout(() => {
+      tokenTimer = null;
+      localStorage.removeItem(tokenName);
+      this.onStatusChanged('succeeded', '자동으로 로그아웃되었습니다');
+      this.setState({
+        token: null,
+        isAdmin: false
+      });
+    }, lifeTime);
+  }
   
   render() {
-    if (this.state.expired) {
-      this.setState({
-        expired: false
-      });
-      return (<Navigate replace to='logout' />);
-    }
-
     const token = this.state.token;
     const home = token != null ? <Home token={token} onStatusChanged={this.onStatusChanged} /> : <Navigate replace to='/login' />;
     const login = token == null ? <Login onTokenChanged={this.onTokenChanged} onStatusChanged={this.onStatusChanged} /> : <Navigate replace to='/' />;
     const logout = token != null ? <Logout token={token} onTokenChanged={this.onTokenChanged} onStatusChanged={this.onStatusChanged} /> : <Navigate replace to='/login' />;
-    const admin = token != null ? <Admin token={token} onStatusChanged={this.onStatusChanged} /> : <Navigate replace to='/login' />;
+    const admin = this.state.isAdmin == adminRole ? <Admin token={token} onStatusChanged={this.onStatusChanged} /> : token != null ? <Navigate replace to='/' /> : <Navigate replace to='/login' />;
     const chart = token != null ? <ShowChart token={token} onStatusChanged={this.onStatusChanged} /> : <Navigate replace to='/login' />;
     
     return (

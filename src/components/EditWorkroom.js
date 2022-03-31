@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import removeSpecChars from './StringUtils';
+import validateResponse from './ValidateResponse';
 
 export class EditWorkroom extends Component {
     constructor(props) {
@@ -36,12 +37,12 @@ export class EditWorkroom extends Component {
     submitWokroom(event) {
         event.preventDefault();
 
-        const id = this.props.workroom['id'];
+        const uid = this.props.workroom['uid'];
         const workroomName = this.state.workroomName;
         if (!this.validate(workroomName)) return;
 
         this.props.onStatusChanged('processing', '수정 중...');
-        this.editWorkroom(id, workroomName);
+        this.editWorkroom(uid, workroomName);
     }
 
     onWorkroomNameChanged(event) {
@@ -76,20 +77,20 @@ export class EditWorkroom extends Component {
         );
     }
 
-    async editWorkroom(id, workroomName) {
-        const response = await fetch('api/station', {
+    async editWorkroom(uid, workroomName) {
+        const response = await fetch('api/workroom', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': this.props.token
+                'Authorization': 'Bearer ' + this.props.token
             },
             body: JSON.stringify({
-                'id': id + '',
+                'uid': Number(uid),
                 'name': workroomName + '',
             })
         });
         if (!response.ok) {
-            console.log(response);
+            validateResponse(response);
             this.props.onStatusChanged('failed', '수정 실패');
             return;
         }
