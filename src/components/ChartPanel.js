@@ -3,6 +3,7 @@ import { Chart, registerables } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import { Mobile, PC } from './DeviceInfo.tsx';
 import validateResponse from './ValidateResponse';
+import setComma from './DecimalSeperator';
 
 Chart.register(...registerables);
 
@@ -79,13 +80,20 @@ export class ChartPanel extends Component {
                     font: {
                       size: 18
                     }
+                  },
+                  tooltip: {
+                    callbacks: {
+                      label: function(context) {
+                        return ' ' + setComma(context.dataset.data[context.dataIndex]) + ' kg';
+                      }
+                    }
                   }
                 },
                 scales: {
                   x: {
                     ticks: {
                       callback: function (value, index, ticks) {
-                        return (value / 1000) + ' ' + dataSuffix;
+                        return (value / 1000) + ' t';
                       }
                     }
                   }
@@ -109,13 +117,20 @@ export class ChartPanel extends Component {
                     font: {
                       size: 18
                     } 
+                  },
+                  tooltip: {
+                    callbacks: {
+                      label: function(context) {
+                        return ' ' + setComma(context.dataset.data[context.dataIndex]) + ' kg';
+                      }
+                    }
                   }
                 },
                 scales: {
                   y: {
                     ticks: {
                       callback: function (value, index, ticks) {
-                        return (value / 1000) + ' ' + dataSuffix;
+                        return (value / 1000) + ' t';
                       }
                     }
                   }

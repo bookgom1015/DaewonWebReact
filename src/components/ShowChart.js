@@ -19,7 +19,6 @@ export class ShowChart extends Component {
             selectedDay: -1,
             title: '연간 차트', 
             dateSuffix: '년',
-            dataSuffix: 't',           
         }
 
         this.onSelectedDateChanged = this.onSelectedDateChanged.bind(this);
@@ -73,8 +72,7 @@ export class ShowChart extends Component {
             <div className='show-chart-wrapper'>
                 <div id='chart-panel-wrapper'>
                     {datasets != null && labels != null && 
-                    <ChartPanel token={this.props.token} onStatusChanged={this.props.onStatusChanged} datasets={datasets} labels={labels} title={this.state.title} 
-                        dateSuffix={this.state.dateSuffix} dataSuffix={this.state.dataSuffix} />
+                    <ChartPanel token={this.props.token} onStatusChanged={this.props.onStatusChanged} datasets={datasets} labels={labels} title={this.state.title} dateSuffix={this.state.dateSuffix} />
                     }
                 </div>
                 {this.state.dates != null &&

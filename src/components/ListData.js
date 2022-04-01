@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { EditData } from './EditData';
 import validateResponse from './ValidateResponse';
+import setComma from './DecimalSeperator';
 import './ListData.css';
 
 export class ListData extends Component {
@@ -72,7 +73,7 @@ export class ListData extends Component {
                             <tr key={index} className={index % 2 == 0 ? 'even' : ''}>
                                 <td>{data['date']}</td>
                                 <td>{data['workroom']}</td>
-                                <td className='weight' >{data['weight'].toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</td>
+                                <td className='weight' >{setComma(data['weight'])}</td>
                                 <td>
                                     <button className='btn btn-secondary' onClick={() => this.onEditBtnClicked(data)}>수정</button>
                                     <button className='btn btn-danger' onClick={() => this.onDeleteBtnClicked(data)}>삭제</button>
