@@ -64,7 +64,7 @@ export class DateNave extends Component {
         );
 
         return (
-            <div id='date-nav-wrapper'>
+            <div>
                 <Mobile>
                     <input id='date-nav-chk' type='checkbox' />
                     <label for='date-nav-chk'>
@@ -77,9 +77,11 @@ export class DateNave extends Component {
                     </div>
                 </Mobile>
                 <PC>
-                    <ul className='none-list-style'>
-                        {dateList}
-                    </ul>
+                    <div id='date-nav-wrapper'>
+                        <ul className='none-list-style'>
+                            {dateList}
+                        </ul>
+                    </div>
                 </PC>
             </div>
         );
