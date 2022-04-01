@@ -145,7 +145,7 @@ export class Home extends Component {
                         {!workroomIsValid && <div className='validation-message'>작업실을 선택해주십시오</div>}
                     </div>
                     <div className='form-group'>
-                        <label>중량(t):</label>
+                        <label>중량(kg):</label>
                         <input className={weightIsValid ? 'form-control' : 'form-control validation-control'} type='number' max='1.7976931348623157E+308' min='0' value={this.state.weight} onKeyDown={this.onWeightKeyDown} onChange={this.onWeightChanged} />
                         {!weightIsValid && <div className='validation-message'>중량을 입력해주십시오</div>}
                     </div>
