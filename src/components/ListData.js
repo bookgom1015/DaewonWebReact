@@ -63,7 +63,7 @@ export class ListData extends Component {
                             <tr>
                                 <th>날짜</th>
                                 <th>작업실</th>
-                                <th>중량(kg)</th>
+                                <th className='weight'>중량(kg)</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -72,7 +72,7 @@ export class ListData extends Component {
                             <tr key={index} className={index % 2 == 0 ? 'even' : ''}>
                                 <td>{data['date']}</td>
                                 <td>{data['workroom']}</td>
-                                <td>{data['weight']}</td>
+                                <td className='weight' >{data['weight'].toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</td>
                                 <td>
                                     <button className='btn btn-secondary' onClick={() => this.onEditBtnClicked(data)}>수정</button>
                                     <button className='btn btn-danger' onClick={() => this.onDeleteBtnClicked(data)}>삭제</button>
