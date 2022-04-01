@@ -25,6 +25,8 @@ const borderColors = [
   'rgb(255, 201, 27)',
 ];
 
+const dataSuffix = ' kg';
+
 export class ChartPanel extends Component {
   constructor(props) {
     super(props);
@@ -61,7 +63,6 @@ export class ChartPanel extends Component {
     };
 
     const dateSuffix = this.props.dateSuffix;
-    const dataSuffix = this.props.dataSuffix;
 
     return (
       <div>
@@ -84,7 +85,7 @@ export class ChartPanel extends Component {
                   tooltip: {
                     callbacks: {
                       label: function(context) {
-                        return ' ' + setComma(context.dataset.data[context.dataIndex]) + ' kg';
+                        return ' ' + setComma(context.dataset.data[context.dataIndex]) + dataSuffix;
                       }
                     }
                   }
@@ -121,7 +122,7 @@ export class ChartPanel extends Component {
                   tooltip: {
                     callbacks: {
                       label: function(context) {
-                        return ' ' + setComma(context.dataset.data[context.dataIndex]) + ' kg';
+                        return ' ' + setComma(context.dataset.data[context.dataIndex]) + dataSuffix;
                       }
                     }
                   }

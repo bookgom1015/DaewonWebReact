@@ -9,7 +9,7 @@ table[id='list-account-table'] thead tr {
 }
 
 table[id='list-account-table'] thead tr th {
-    padding-left: 10px;
+    padding-left: 20px;
 }
 
 table[id='list-account-table'] tbody tr {
@@ -21,7 +21,7 @@ table[id='list-account-table'] .even {
 }
 
 table[id='list-account-table'] tbody tr td {
-    padding-left: 10px;
+    padding-left: 20px;
 }
 
 table[id='list-account-table'] tbody tr td:nth-child(2) {
