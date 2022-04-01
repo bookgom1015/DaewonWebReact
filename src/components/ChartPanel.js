@@ -24,8 +24,6 @@ const borderColors = [
   'rgb(255, 201, 27)',
 ];
 
-const dataSuffix = ' kg';
-
 export class ChartPanel extends Component {
   constructor(props) {
     super(props);
@@ -81,13 +79,6 @@ export class ChartPanel extends Component {
                     font: {
                       size: 18
                     }
-                  },
-                  tooltip: {
-                    callbacks: {
-                      label: function(context) {
-                        return ' ' + context.dataset.data + dataSuffix;
-                      }
-                    }
                   }
                 },
                 scales: {
@@ -118,13 +109,6 @@ export class ChartPanel extends Component {
                     font: {
                       size: 18
                     } 
-                  },
-                  tooltip: {
-                    callbacks: {
-                      label: function(context) {
-                        return ' ' + context.dataset.data + dataSuffix;
-                      }
-                    }
                   }
                 },
                 scales: {
