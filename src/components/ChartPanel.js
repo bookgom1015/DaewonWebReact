@@ -85,7 +85,7 @@ export class ChartPanel extends Component {
                   x: {
                     ticks: {
                       callback: function (value, index, ticks) {
-                        return value + ' ' + dataSuffix;
+                        return (value / 1000) + ' ' + dataSuffix;
                       }
                     }
                   }
@@ -115,7 +115,7 @@ export class ChartPanel extends Component {
                   y: {
                     ticks: {
                       callback: function (value, index, ticks) {
-                        return value + ' ' + dataSuffix;
+                        return (value / 1000) + ' ' + dataSuffix;
                       }
                     }
                   }

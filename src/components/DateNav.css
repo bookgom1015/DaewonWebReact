@@ -40,6 +40,12 @@ div[id='date-nav-wrapper'] {
   height: calc(100vh - 80px);
   overflow: auto;
 }
+@media screen and (max-width: 767px) {
+  div[id='date-nav-wrapper'] {
+    height: 0;
+    overflow: auto;
+  }
+}
 
 input[id='date-nav-chk'] {
   display: none;

@@ -63,7 +63,7 @@ export class ListData extends Component {
                             <tr>
                                 <th>날짜</th>
                                 <th>작업실</th>
-                                <th>중량</th>
+                                <th>중량(kg)</th>
                                 <th></th>
                             </tr>
                         </thead>

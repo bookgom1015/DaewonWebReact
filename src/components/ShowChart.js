@@ -19,7 +19,7 @@ export class ShowChart extends Component {
             selectedDay: -1,
             title: '연간 차트', 
             dateSuffix: '년',
-            dataSuffix: 'kg',           
+            dataSuffix: 't',           
         }
 
         this.onSelectedDateChanged = this.onSelectedDateChanged.bind(this);
